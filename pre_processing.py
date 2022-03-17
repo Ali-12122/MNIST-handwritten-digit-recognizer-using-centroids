@@ -41,7 +41,7 @@ def calculate_image_centroids(image):
     # as it creates the matrix in a row major order, but this creates a cols_position_matrix
     # that is transposed, and hence, getting its transpose returns it to its original shape.
 
-    sum_matrix_values = int(np.sum(flat_image_as_arr))
+    sum_matrix_values = np.sum(flat_image_as_arr)
 
     matrix_values_times_row_values = image_as_arr * rows_position_matrix
     matrix_values_times_column_values = image_as_arr * cols_position_matrix
@@ -49,11 +49,15 @@ def calculate_image_centroids(image):
     flat_matrix_values_times_row_values = matrix_values_times_row_values.flatten('C')
     flat_matrix_values_times_column_values = matrix_values_times_column_values.flatten('C')
 
-    sum_matrix_values_times_row_values = int(np.sum(flat_matrix_values_times_row_values))
-    sum_matrix_values_times_column_values = int(np.sum(flat_matrix_values_times_column_values))
+    sum_matrix_values_times_row_values = np.sum(flat_matrix_values_times_row_values)
+    sum_matrix_values_times_column_values = np.sum(flat_matrix_values_times_column_values)
 
     column_centroid = sum_matrix_values_times_column_values / sum_matrix_values
     row_centroid = sum_matrix_values_times_row_values / sum_matrix_values
+
+    if sum_matrix_values == 0:
+        row_centroid = 0
+        column_centroid = 0
 
     return row_centroid, column_centroid
 
@@ -92,9 +96,9 @@ def extract_feature_vector(image, num_sub_images):
 
                 # Computing the centroids and adding them to the feature vector.
                 image_centroids = calculate_image_centroids(new_sub_image)
-                feature_vector[i] = image_centroids[0]
-                feature_vector[i + 1] = image_centroids[1]
-                i += 1
+                feature_vector[i] = float(image_centroids[0])
+                feature_vector[i + 1] = float(image_centroids[1])
+                i += 2
 
     return feature_vector.flatten()
 
